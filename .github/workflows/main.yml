@@ -15,14 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -30,13 +29,13 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Install packages
+      - name: Install dependencies
         run: npm install
 
-      - name: Build website
+      - name: Build web app
         run: npm run build
 
-      - name: Add Android
+      - name: Add Android platform
         run: npx cap add android
 
       - name: Sync Android
@@ -48,7 +47,7 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload BODYLAND APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: BODYLAND-APK
