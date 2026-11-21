@@ -1,281 +1,44 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111111">
-<title>BODYLAND GYM</title>
+CREATE OR REPLACE FUNCTION public.handle_new_bodyland_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO public.athletes (
+    user_id,
+    full_name,
+    phone,
+    username,
+    email,
+    membership_status,
+    total_sessions,
+    remaining_sessions,
+    coaching_type
+  )
+  VALUES (
+    NEW.id,
+    COALESCE(
+      NEW.raw_user_meta_data->>'full_name',
+      ''
+    ),
+    NEW.raw_user_meta_data->>'phone',
+    LOWER(NEW.raw_user_meta_data->>'username'),
+    NEW.raw_user_meta_data->>'contact_email',
+    'pending',
+    0,
+    0,
+    'none'
+  );
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  RETURN NEW;
+END;
+$$;
 
-<style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#101010;color:white;
- font-family:Tahoma,Arial,sans-serif;
-}
-header{
- background:#171717;padding:25px 15px;
- text-align:center;border-bottom:3px solid #e32636;
-}
-.logo{font-size:30px;font-weight:bold;letter-spacing:2px}
-.logo span{color:#e32636}
-header p{color:#aaa;font-size:12px}
-.container{max-width:600px;margin:auto;padding:18px}
-.card{
- background:#1b1b1b;border:1px solid #303030;
- border-radius:14px;padding:18px;margin-bottom:15px;
-}
-h2{font-size:18px;margin-top:0}
-h2 span{color:#e32636}
-input{
- width:100%;padding:14px;margin:8px 0;
- background:#101010;border:1px solid #444;
- border-radius:8px;color:white;font-size:15px;
-}
-button{
- width:100%;padding:14px;border:0;
- border-radius:8px;background:#e32636;
- color:white;font-weight:bold;font-size:15px;
- margin-top:10px;cursor:pointer;
-}
-button.secondary{background:#333}
-.item{
- padding:12px 0;border-bottom:1px solid #333;
- display:flex;justify-content:space-between;gap:10px;
-}
-.value{color:#e32636;font-weight:bold}
-.small{font-size:12px;color:#aaa;line-height:2}
-.hidden{display:none}
-footer{text-align:center;color:#777;font-size:11px;padding:25px}
-#message{color:#ff7474;font-size:13px;line-height:2}
-</style>
-</head>
+DROP TRIGGER IF EXISTS on_bodyland_user_created
+ON auth.users;
 
-<body>
-
-<header>
- <div class="logo">BODY<span>LAND</span></div>
- <p>FITNESS CLUB | باشگاه سرزمین بدن</p>
-</header>
-
-<main class="container">
-
-<section id="loginSection" class="card">
- <h2>ورود به <span>باشگاه</span></h2>
- <p class="small">برای مشاهده اطلاعات ورزشی خود وارد حساب کاربری شوید.</p>
-
- <input id="email" type="email" placeholder="ایمیل">
- <input id="password" type="password" placeholder="رمز عبور">
-
- <button onclick="login()">ورود به حساب</button>
- <p id="message"></p>
-</section>
-
-<section id="dashboard" class="hidden">
-
- <div class="card">
-  <h2>سلام، <span id="athleteName">ورزشکار</span></h2>
-  <p class="small">به پنل اختصاصی BODYLAND خوش آمدید.</p>
-  <div class="item">
-   <span>وضعیت عضویت</span>
-   <span class="value" id="membershipStatus">در انتظار بررسی</span>
-  </div>
-  <div class="item">
-   <span>نوع مربی</span>
-   <span class="value" id="coachType">-</span>
-  </div>
- </div>
-
- <div class="card">
-  <h2>جلسات <span>ورزشی</span></h2>
-  <div class="item">
-   <span>کل جلسات</span>
-   <span class="value" id="totalSessions">۰</span>
-  </div>
-  <div class="item">
-   <span>جلسات باقی‌مانده</span>
-   <span class="value" id="remainingSessions">۰</span>
-  </div>
- </div>
-
- <div class="card">
-  <h2>تعرفه‌های <span>باشگاه</span></h2>
-  <p class="small">تعرفه‌های یک‌ماهه</p>
-  <div class="item"><span>۸ جلسه</span><b>۲,۴۰۰,۰۰۰ تومان</b></div>
-  <div class="item"><span>۱۲ جلسه</span><b>۲,۶۰۰,۰۰۰ تومان</b></div>
-  <div class="item"><span>۱۶ جلسه</span><b>۲,۹۰۰,۰۰۰ تومان</b></div>
-  <div class="item"><span>۲۰ جلسه</span><b>۳,۲۰۰,۰۰۰ تومان</b></div>
-  <div class="item"><span>۲۴ جلسه</span><b>۳,۵۰۰,۰۰۰ تومان</b></div>
- </div>
-
- <div class="card">
-  <h2>ساعات <span>کاری</span></h2>
-  <p class="small">
-   آقایان: شنبه تا چهارشنبه، ۶ تا ۸ صبح و ۱۴ تا ۲۳:۴۵<br>
-   پنجشنبه: ۱۴ تا ۲۱:۴۵<br>
-   جمعه: ۱۴ تا ۱۸:۴۵<br><br>
-   بانوان: شنبه تا پنجشنبه، ۸ صبح تا ۱۴
-  </p>
- </div>
-
- <div class="card">
-  <h2>اطلاعیه‌های <span>باشگاه</span></h2>
-  <div id="announcements" class="small">در حال دریافت اطلاعیه‌ها...</div>
- </div>
-
- <div class="card">
-  <h2>ارتباط با <span>ما</span></h2>
-  <p class="small">
-   تلفن: 09131928262<br>
-   تلفن ثابت: 03132301313<br>
-   اصفهان، جی، خیابان تالار
-  </p>
-  <button onclick="window.location.href='tel:09131928262'">
-   تماس با باشگاه
-  </button>
- </div>
-
- <button class="secondary" onclick="logout()">خروج از حساب</button>
-
-</section>
-
-</main>
-
-<footer>BODYLAND GYM © 2026</footer>
-
-<script>
-const SUPABASE_URL = "https://zjdbztuqkjwofdilugpz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_BDArNJu4_XDYsStUJARB7w_DS-4e9XS";
-
-const db = window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
-);
-
-const $ = id => document.getElementById(id);
-
-async function login(){
- const email = $("email").value.trim();
- const password = $("password").value;
-
- $("message").textContent = "در حال ورود...";
-
- const {data,error} = await db.auth.signInWithPassword({
-  email,password
- });
-
- if(error){
-  $("message").textContent = "خطا در ورود: " + error.message;
-  return;
- }
-
- await loadDashboard();
-}
-
-async function loadDashboard(){
- const {data:{user}} = await db.auth.getUser();
-
- if(!user) return;
-
- const {data:athlete,error} = await db
-  .from("athletes")
-  .select("*")
-  .eq("user_id",user.id)
-  .maybeSingle();
-
- if(error){
-  $("message").textContent = "خطا در دریافت اطلاعات ورزشکار.";
-  return;
- }
-
- if(!athlete){
-  $("message").textContent = "برای این حساب هنوز پرونده ورزشی ثبت نشده است.";
-  await db.auth.signOut();
-  return;
- }
-
- $("loginSection").classList.add("hidden");
- $("dashboard").classList.remove("hidden");
-
- $("athleteName").textContent = athlete.full_name || "ورزشکار";
- $("totalSessions").textContent = athlete.total_sessions ?? 0;
- $("remainingSessions").textContent = athlete.remaining_sessions ?? 0;
-
- const coaches = {
-  private:"خصوصی",
-  semi_private:"نیمه‌خصوصی",
-  none:"بدون مربی"
- };
-
- const statuses = {
-  pending:"در انتظار تأیید",
-  approved:"تأیید شده",
-  rejected:"رد شده"
- };
-
- $("coachType").textContent =
-  coaches[athlete.coaching_type] || "-";
-
- $("membershipStatus").textContent =
-  statuses[athlete.membership_status] || "-";
-
- await loadAnnouncements();
-}
-
-async function loadAnnouncements(){
- const box = $("announcements");
-
- const {data,error} = await db
-  .from("announcements")
-  .select("title,message,created_at")
-  .order("created_at",{ascending:false})
-  .limit(20);
-
- if(error){
-  box.textContent = "دریافت اطلاعیه‌ها ممکن نیست.";
-  return;
- }
-
- box.replaceChildren();
-
- if(!data || data.length===0){
-  box.textContent = "هنوز اطلاعیه‌ای ثبت نشده است.";
-  return;
- }
-
- data.forEach(item=>{
-  const title = document.createElement("strong");
-  title.textContent = item.title;
-
-  const message = document.createElement("p");
-  message.textContent = item.message;
-
-  const card = document.createElement("div");
-  card.style.padding = "10px 0";
-  card.style.borderBottom = "1px solid #333";
-  card.append(title,message);
-  box.append(card);
- });
-}
-
-async function logout(){
- await db.auth.signOut();
- location.reload();
-}
-
-db.auth.onAuthStateChange((event,session)=>{
- if(session && event==="SIGNED_IN"){
-  loadDashboard();
- }
-});
-
-(async()=>{
- const {data:{session}} = await db.auth.getSession();
- if(session) await loadDashboard();
-})();
-</script>
-
-</body>
-  </html>
-  
+CREATE TRIGGER on_bodyland_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_new_bodyland_user();
