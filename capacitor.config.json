@@ -1,1 +1,9 @@
 
+{
+  "appId": "com.bodyland.gym",
+  "appName": "BODYLAND",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
