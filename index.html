@@ -3,336 +3,283 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#101010">
 <title>BODYLAND GYM</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#101214;--panel:#1a1e22;--panel2:#22282e;--text:#f5f7f8;--muted:#aab2b9;--green:#b7f34a;--red:#ff6262;--line:#343b42}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.7}
-button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;background:var(--green);color:#101214;font-weight:bold}
-button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
-button.danger{background:#5a2528;color:#fff}.link-button{background:none;color:var(--green);padding:4px 6px}
-input,select{width:100%;padding:12px;margin:5px 0 12px;border-radius:10px;border:1px solid var(--line);background:#111519;color:var(--text)}
-label{display:block;color:#dce1e5;font-size:14px}.muted{color:var(--muted)}.center{text-align:center}
-.hidden{display:none!important}.wrap{max-width:900px;margin:auto;padding:18px}.brand{text-align:center;margin:20px 0 26px}.brand h1{margin:0;color:var(--green);letter-spacing:2px;font-size:30px}.brand p{margin:0;color:var(--muted)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}
-.auth-wrap{max-width:480px;margin:24px auto}.auth-wrap h2{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-.stat{background:var(--panel2);padding:14px;border-radius:13px}.stat strong{display:block;color:var(--green);font-size:22px}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.tabs{display:flex;gap:8px;overflow:auto;padding:8px 0 14px}.tabs button{white-space:nowrap}
-.tabs button.active{background:var(--green);color:#111}.tabs button:not(.active){background:var(--panel2);color:var(--text);border:1px solid var(--line)}
-.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
-.notice{padding:12px;border-radius:12px;background:#28351b;color:#e7ffd0;margin:10px 0}.error{background:#452326;color:#ffd9d9}
-.small{font-size:13px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
-table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:9px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:24px}
+:root{--bg:#101010;--panel:#1b1b1b;--panel2:#242424;--text:#f5f5f5;--muted:#aaa;--accent:#b7ef35;--danger:#ff6868;--line:#333}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.8}
+header{padding:22px 18px;background:linear-gradient(135deg,#222,#101010);border-bottom:1px solid var(--line);text-align:center}
+.logo{width:76px;height:76px;object-fit:contain;border-radius:18px;background:#fff;padding:5px;margin-bottom:8px}
+h1{margin:0;font-size:27px;letter-spacing:2px}header p{margin:3px 0;color:var(--muted)}
+nav{display:flex;gap:8px;overflow-x:auto;padding:12px;background:#151515;position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line)}
+nav button{white-space:nowrap;background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:9px 14px;border-radius:12px;font:inherit;cursor:pointer}
+nav button.active{background:var(--accent);color:#111;border-color:var(--accent);font-weight:bold}
+main{max-width:900px;margin:auto;padding:18px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 12px;color:var(--accent)}h3{font-size:17px;margin:0 0 7px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.muted{color:var(--muted);font-size:14px}.price{font-size:21px;font-weight:bold;color:var(--accent)}
+input,select,textarea{width:100%;padding:12px;margin:5px 0 12px;background:#111;color:white;border:1px solid #444;border-radius:10px;font:inherit}
+label{display:block;font-size:14px;color:#ddd}
+button.primary{background:var(--accent);color:#111;border:0;border-radius:11px;padding:11px 17px;font:inherit;font-weight:bold;cursor:pointer}
+button.secondary{background:#333;color:white;border:1px solid #555;border-radius:10px;padding:9px 13px;font:inherit;cursor:pointer}
+button.danger{background:#5b2525;color:#fff;border:1px solid #8d3b3b;border-radius:10px;padding:9px 13px;font:inherit;cursor:pointer}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:1}
+.notice{padding:12px;border-radius:10px;background:#292f1d;border:1px solid #53652a;margin:8px 0}
+.error{background:#3a2020;border-color:#793838}.hidden{display:none!important}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:9px;border-bottom:1px solid var(--line);text-align:right}
+footer{text-align:center;color:var(--muted);padding:24px;font-size:13px}
+a{color:var(--accent)}
+@media(max-width:500px){main{padding:12px}h1{font-size:23px}.card{padding:14px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="brand">
-    <h1>BODYLAND</h1><p>سرزمین بدن | BODYLAND GYM</p>
-  </header>
+<header>
+  <div id="logoWrap" class="hidden"><img id="gymLogo" class="logo" alt="لوگوی BODYLAND"></div>
+  <h1>BODYLAND GYM</h1>
+  <p>باشگاه سرزمین بدن</p>
+</header>
+<nav>
+  <button class="active" data-page="home">صفحه اصلی</button>
+  <button data-page="tariffs">تعرفه‌ها</button>
+  <button data-page="hours">ساعت کاری</button>
+  <button data-page="contact">تماس با ما</button>
+  <button data-page="admin">مدیریت</button>
+</nav>
+<main>
+<section id="home" class="page active">
+  <div class="card">
+    <h2>به BODYLAND خوش آمدید</h2>
+    <p>به اپلیکیشن باشگاه بادی لند خوش آمدید. اطلاعات تعرفه‌ها، ساعت کاری و اطلاعیه‌های باشگاه را از این قسمت مشاهده کنید.</p>
+    <p class="muted">برای عضویت یا دریافت اطلاعات بیشتر با باشگاه تماس بگیرید.</p>
+  </div>
+  <div class="card">
+    <h2>اطلاعیه‌های باشگاه</h2>
+    <div id="publicAnnouncements"><p class="muted">در حال دریافت اطلاعیه‌ها...</p></div>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>آدرس باشگاه</h3><p>اصفهان، جی، خیابان تالار</p></div>
+    <div class="card"><h3>ارتباط با ما</h3><p>09131928262<br>03132301313</p></div>
+  </div>
+</section>
 
-  <main id="authArea">
-    <section id="loginPage" class="auth-wrap card">
-      <h2>ورود به برنامه</h2>
-      <form id="loginForm">
-        <label>نام کاربری</label><input id="loginUsername" autocomplete="username" required>
-        <label>رمز عبور</label><input id="loginPassword" type="password" autocomplete="current-password" required>
-        <button type="submit" style="width:100%">ورود</button>
-      </form>
-      <p class="center muted">حساب ندارید؟
-        <button type="button" id="openRegisterBtn" class="link-button">ثبت نام کنید</button>
-      </p>
-    </section>
-
-    <section id="registerPage" class="auth-wrap card hidden">
-      <h2>ساخت حساب کاربری</h2>
-      <form id="registerForm">
-        <label>نام</label><input id="firstName" autocomplete="given-name" required>
-        <label>نام خانوادگی</label><input id="lastName" autocomplete="family-name" required>
-        <label>نام کاربری (فقط حروف انگلیسی کوچک و عدد)</label><input id="regUsername" autocomplete="username" minlength="4" maxlength="24" pattern="[a-z0-9]{4,24}" required>
-        <label>شماره موبایل</label><input id="regPhone" type="tel" inputmode="tel" placeholder="09xxxxxxxxx" required>
-        <label>تاریخ تولد</label><input id="regDob" type="date" required>
-        <label>رمز عبور (حداقل ۶ کاراکتر)</label><input id="regPassword" type="password" minlength="6" autocomplete="new-password" required>
-        <label>تکرار رمز عبور</label><input id="regRepeat" type="password" minlength="6" autocomplete="new-password" required>
-        <button type="submit" style="width:100%">ثبت نام و ورود</button>
-      </form>
-      <p class="center muted">قبلاً حساب ساخته‌اید؟
-        <button type="button" id="openLoginBtn" class="link-button">ورود به حساب</button>
-      </p>
-    </section>
-  </main>
-
-  <main id="appArea" class="hidden">
-    <div class="card topbar">
-      <div><strong id="welcomeText">خوش آمدید</strong><div class="muted small" id="userHandle"></div></div>
-      <div class="row" style="flex:0 1 auto">
-        <select id="languageSelect" aria-label="زبان">
-          <option value="fa">فارسی</option><option value="en">English</option><option value="ar">العربية</option>
-          <option value="ru">Русский</option><option value="zh">中文</option><option value="ja">日本語</option>
-          <option value="nl">Nederlands</option><option value="it">Italiano</option><option value="tr">Türkçe</option>
-        </select>
-        <button id="logoutBtn" class="secondary" type="button">خروج</button>
-      </div>
+<section id="tariffs" class="page">
+  <div class="card"><h2>تعرفه‌های آقایان و بانوان</h2><p class="muted">مبالغ به تومان هستند.</p>
+    <div class="grid">
+      <div class="card"><h3>۸ جلسه</h3><div class="price">۲,۴۰۰,۰۰۰ تومان</div></div>
+      <div class="card"><h3>۱۲ جلسه</h3><div class="price">۲,۶۰۰,۰۰۰ تومان</div></div>
+      <div class="card"><h3>۱۶ جلسه</h3><div class="price">۲,۹۰۰,۰۰۰ تومان</div></div>
+      <div class="card"><h3>۲۰ جلسه</h3><div class="price">۳,۲۰۰,۰۰۰ تومان</div></div>
+      <div class="card"><h3>۲۴ جلسه</h3><div class="price">۳,۵۰۰,۰۰۰ تومان</div></div>
     </div>
+    <p class="muted">برای اطلاع از شرایط ثبت‌نام و تعرفه‌های به‌روز با باشگاه تماس بگیرید.</p>
+  </div>
+</section>
 
-    <nav class="tabs">
-      <button class="active" data-tab="homeTab">خانه</button>
-      <button data-tab="tariffsTab">تعرفه‌ها</button>
-      <button data-tab="hoursTab">ساعت کاری</button>
-      <button data-tab="settingsTab">تنظیمات</button>
-      <button data-tab="adminTab" id="adminTabButton" class="hidden">مدیریت</button>
-    </nav>
+<section id="hours" class="page">
+  <div class="card"><h2>ساعت کاری آقایان</h2>
+    <p>شنبه تا چهارشنبه: ۶ تا ۸ صبح و ۱۴ تا ۲۳:۴۵</p>
+    <p>پنجشنبه: ۱۴ تا ۲۱:۴۵</p><p>جمعه: ۱۴ تا ۱۸:۴۵</p>
+  </div>
+  <div class="card"><h2>ساعت کاری بانوان</h2><p>شنبه تا پنجشنبه: ۸ صبح تا ۱۴</p></div>
+</section>
 
-    <section id="homeTab" class="tabPage">
-      <div class="card">
-        <h2>وضعیت عضویت</h2>
-        <div class="grid">
-          <div class="stat"><span class="muted">جلسات کل</span><strong id="totalSessions">—</strong></div>
-          <div class="stat"><span class="muted">جلسات باقی‌مانده</span><strong id="remainingSessions">—</strong></div>
-          <div class="stat"><span class="muted">نوع مربی</span><strong id="coachType">—</strong></div>
-          <div class="stat"><span class="muted">وضعیت عضویت</span><strong id="membershipStatus">—</strong></div>
-        </div>
-      </div>
-      <div class="card">
-        <h2>اطلاعیه‌های باشگاه</h2><div id="announcements"><p class="muted">در حال دریافت اطلاعیه‌ها...</p></div>
-      </div>
-      <div class="card">
-        <h2>جهت عضویت و اطلاعات بیشتر</h2>
-        <p>برای عضویت یا دریافت اطلاعات بیشتر با باشگاه تماس بگیرید.</p>
-        <p>📞 <a href="tel:09131928262" style="color:var(--green)">09131928262</a></p>
-        <p>☎️ <a href="tel:03132301313" style="color:var(--green)">03132301313</a></p>
-        <p>📍 اصفهان، جی، خیابان تالار</p>
-      </div>
-    </section>
+<section id="contact" class="page">
+  <div class="card"><h2>تماس با باشگاه</h2>
+    <p>آدرس: اصفهان، جی، خیابان تالار</p>
+    <p>شماره تماس اول: <a href="tel:09131928262">09131928262</a></p>
+    <p>شماره تماس دوم: <a href="tel:03132301313">03132301313</a></p>
+    <p class="muted">برای عضویت و دریافت اطلاعات بیشتر با باشگاه تماس بگیرید.</p>
+  </div>
+</section>
 
-    <section id="tariffsTab" class="tabPage hidden">
-      <div class="card"><h2>تعرفه آقایان و بانوان</h2>
-        <div class="item">۸ جلسه <strong style="float:left">۲,۴۰۰,۰۰۰ تومان</strong></div>
-        <div class="item">۱۲ جلسه <strong style="float:left">۲,۶۰۰,۰۰۰ تومان</strong></div>
-        <div class="item">۱۶ جلسه <strong style="float:left">۲,۹۰۰,۰۰۰ تومان</strong></div>
-        <div class="item">۲۰ جلسه <strong style="float:left">۳,۲۰۰,۰۰۰ تومان</strong></div>
-        <div class="item">۲۴ جلسه <strong style="float:left">۳,۵۰۰,۰۰۰ تومان</strong></div>
-        <p class="muted small">برای اطلاع از شرایط و ثبت‌نام با باشگاه تماس بگیرید.</p>
+<section id="admin" class="page">
+  <div id="adminLogin" class="card">
+    <h2>ورود مدیر باشگاه</h2>
+    <p class="muted">این بخش فقط برای مدیران مجاز است. ورود کاربران عادی به برنامه نیازی به حساب کاربری ندارد.</p>
+    <label>ایمیل مدیر</label><input id="adminEmail" type="email" autocomplete="username" placeholder="ایمیل مدیر">
+    <label>رمز عبور</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="رمز عبور">
+    <button class="primary" id="adminLoginBtn">ورود به پنل مدیریت</button>
+    <p id="adminLoginMessage" class="muted"></p>
+  </div>
+  <div id="adminPanel" class="hidden">
+    <div class="card row"><div><h2>پنل مدیریت</h2><p class="muted">مدیریت اطلاعات ورزشکاران و اطلاعیه‌ها</p></div><button class="secondary" id="adminLogoutBtn">خروج مدیر</button></div>
+    <div class="card">
+      <h2>جست‌وجوی ورزشکار</h2>
+      <div class="row"><input id="athleteSearch" placeholder="نام، نام کاربری یا شماره موبایل"><button class="primary" id="searchAthleteBtn">جست‌وجو</button></div>
+      <div id="athleteResults" class="muted">برای نمایش ورزشکاران جست‌وجو کنید.</div>
+    </div>
+    <div class="card">
+      <h2>افزودن / ویرایش ورزشکار</h2>
+      <input id="athleteId" type="hidden">
+      <div class="grid">
+        <div><label>نام و نام خانوادگی</label><input id="athleteName" placeholder="نام کامل"></div>
+        <div><label>شماره موبایل</label><input id="athletePhone" placeholder="شماره موبایل"></div>
+        <div><label>نام کاربری</label><input id="athleteUsername" placeholder="نام کاربری"></div>
+        <div><label>جنسیت</label><select id="athleteGender"><option value="male">آقایان</option><option value="female">بانوان</option></select></div>
+        <div><label>تعداد کل جلسات</label><input id="totalSessions" type="number" min="0" value="0"></div>
+        <div><label>جلسات باقی‌مانده</label><input id="remainingSessions" type="number" min="0" value="0"></div>
+        <div><label>نوع مربی</label><select id="coachingType"><option value="none">بدون مربی</option><option value="private">خصوصی</option><option value="semi_private">نیمه‌خصوصی</option></select></div>
+        <div><label>وضعیت عضویت</label><select id="membershipStatus"><option value="active">فعال</option><option value="inactive">غیرفعال</option></select></div>
       </div>
-    </section>
-
-    <section id="hoursTab" class="tabPage hidden">
-      <div class="card"><h2>ساعت کاری آقایان</h2>
-        <p>شنبه تا چهارشنبه: ۶ تا ۸ صبح و ۱۴ تا ۲۳:۴۵</p>
-        <p>پنجشنبه: ۱۴ تا ۲۱:۴۵</p><p>جمعه: ۱۴ تا ۱۸:۴۵</p>
-      </div>
-      <div class="card"><h2>ساعت کاری بانوان</h2><p>شنبه تا پنجشنبه: ۸ صبح تا ۱۴</p></div>
-    </section>
-
-    <section id="settingsTab" class="tabPage hidden">
-      <div class="card"><h2>اطلاعات حساب</h2>
-        <label>نام و نام خانوادگی</label><input id="profileName">
-        <label>شماره موبایل</label><input id="profilePhone" type="tel">
-        <label>تاریخ تولد</label><input id="profileDob" type="date">
-        <label>نام کاربری</label><input id="profileUsername" disabled>
-        <button id="saveProfileBtn" type="button">ذخیره تغییرات</button>
-      </div>
-      <div class="card"><h2>اعلان‌ها</h2>
-        <label class="row"><span>دریافت اعلان‌های داخل برنامه</span><input id="noticeToggle" type="checkbox" style="width:auto"></label>
-        <p class="muted small">این گزینه ترجیح شما را در همین دستگاه ذخیره می‌کند؛ اعلان پوش‌نوتیفیکیشن در این نسخه فعال نیست.</p>
-      </div>
-    </section>
-
-    <section id="adminTab" class="tabPage hidden">
-      <div class="card"><h2>مدیریت ورزشکاران</h2><button id="refreshAthletesBtn" type="button" class="secondary">به‌روزرسانی فهرست</button><div id="athleteList"><p class="muted">فهرست ورزشکاران پس از بارگذاری نمایش داده می‌شود.</p></div></div>
-      <div class="card"><h2>ارسال اطلاعیه داخل برنامه</h2>
-        <label>متن اطلاعیه</label><input id="announcementInput" maxlength="500" placeholder="متن پیام...">
-        <button id="sendAnnouncementBtn" type="button">ارسال اطلاعیه</button>
-      </div>
-      <div class="card"><h2>افزودن مدیر</h2>
-        <label>نام کاربری فرد</label><input id="newAdminUsername" placeholder="username">
-        <button id="addAdminBtn" type="button">افزودن مدیر</button>
-        <p class="muted small">افزودن مدیر فقط از طریق تابع امن دیتابیس انجام می‌شود.</p>
-      </div>
-    </section>
-  </main>
-  <footer>BODYLAND GYM</footer>
-</div>
+      <button class="primary" id="saveAthleteBtn">ذخیره ورزشکار</button>
+      <button class="secondary" id="clearAthleteBtn">پاک کردن فرم</button>
+      <p id="athleteMessage" class="muted"></p>
+    </div>
+    <div class="card">
+      <h2>ارسال اطلاعیه</h2>
+      <label>عنوان اطلاعیه</label><input id="announcementTitle" placeholder="عنوان">
+      <label>متن اطلاعیه</label><textarea id="announcementBody" rows="4" placeholder="متن اطلاعیه"></textarea>
+      <button class="primary" id="sendAnnouncementBtn">انتشار اطلاعیه</button>
+      <p id="announcementMessage" class="muted"></p>
+    </div>
+  </div>
+</section>
+</main>
+<footer>BODYLAND GYM · باشگاه سرزمین بدن</footer>
 
 <script>
+/* تنظیمات اتصال به پروژه Supabase */
 const SUPABASE_URL = "https://zjdbztuqkjwofdilugpz.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_BDArNJu4_XDYsStUJARB7w_DS-4e9XS";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-let currentUser = null;
-let currentAthlete = null;
-let isAdmin = false;
 
-const $ = id => document.getElementById(id);
-function message(text, error=false){
-  let old=$("flashMessage"); if(old) old.remove();
-  const box=document.createElement("div"); box.id="flashMessage"; box.className="notice"+(error?" error":"");
-  box.textContent=text; document.querySelector(".wrap").prepend(box);
-  setTimeout(()=>box.remove(),5000);
+const $ = (id) => document.getElementById(id);
+const showMessage = (id, message, isError=false) => {
+  const el = $(id); el.textContent = message;
+  el.classList.toggle("error", isError);
+};
+document.querySelectorAll("nav button[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    button.classList.add("active");
+    $(button.dataset.page).classList.add("active");
+  });
+});
+
+async function loadAnnouncements() {
+  const target = $("publicAnnouncements");
+  const {data, error} = await db.from("announcements").select("*").order("created_at", {ascending:false}).limit(10);
+  if (error) {
+    target.innerHTML = '<p class="muted">در حال حاضر اطلاعیه‌ای برای نمایش در دسترس نیست.</p>';
+    return;
+  }
+  if (!data || !data.length) {
+    target.innerHTML = '<p class="muted">هنوز اطلاعیه‌ای ثبت نشده است.</p>';
+    return;
+  }
+  target.replaceChildren();
+  data.forEach(item => {
+    const box = document.createElement("div"); box.className = "notice";
+    const title = document.createElement("strong"); title.textContent = item.title || "اطلاعیه باشگاه";
+    const body = document.createElement("p"); body.textContent = item.body || item.message || "";
+    box.append(title, body); target.append(box);
+  });
 }
-function showAuthPage(page){
-  $("loginPage").classList.toggle("hidden",page!=="login");
-  $("registerPage").classList.toggle("hidden",page!=="register");
+
+let currentAdmin = null;
+async function checkAdmin() {
+  const {data:{user}} = await db.auth.getUser();
+  if (!user) return false;
+  const {data, error} = await db.from("admins").select("user_id").eq("user_id", user.id).maybeSingle();
+  if (error || !data) {
+    await db.auth.signOut();
+    return false;
+  }
+  currentAdmin = user;
+  $("adminLogin").classList.add("hidden");
+  $("adminPanel").classList.remove("hidden");
+  return true;
 }
-$("openRegisterBtn").addEventListener("click",()=>showAuthPage("register"));
-$("openLoginBtn").addEventListener("click",()=>showAuthPage("login"));
+$("adminLoginBtn").addEventListener("click", async () => {
+  const email = $("adminEmail").value.trim();
+  const password = $("adminPassword").value;
+  if (!email || !password) return showMessage("adminLoginMessage","ایمیل و رمز عبور را وارد کنید.",true);
+  $("adminLoginBtn").disabled = true;
+  showMessage("adminLoginMessage","در حال بررسی اطلاعات...");
+  const {error} = await db.auth.signInWithPassword({email,password});
+  if (error) showMessage("adminLoginMessage","ورود انجام نشد: "+error.message,true);
+  else if (!(await checkAdmin())) showMessage("adminLoginMessage","این حساب در فهرست مدیران مجاز نیست.",true);
+  else showMessage("adminLoginMessage","ورود موفق بود.");
+  $("adminLoginBtn").disabled = false;
+});
+$("adminLogoutBtn").addEventListener("click", async () => {
+  await db.auth.signOut(); currentAdmin = null;
+  $("adminPanel").classList.add("hidden"); $("adminLogin").classList.remove("hidden");
+  $("adminPassword").value = ""; showMessage("adminLoginMessage","از پنل مدیریت خارج شدید.");
+});
 
-function syntheticEmail(username){return username.trim().toLowerCase()+"@users.bodylandgym.com";}
-function fullName(){return ($("firstName").value.trim()+" "+$("lastName").value.trim()).trim();}
+function clearAthleteForm() {
+  ["athleteId","athleteName","athletePhone","athleteUsername"].forEach(id => $(id).value = "");
+  $("athleteGender").value = "male"; $("totalSessions").value = 0;
+  $("remainingSessions").value = 0; $("coachingType").value = "none";
+  $("membershipStatus").value = "active"; showMessage("athleteMessage","");
+}
+$("clearAthleteBtn").addEventListener("click", clearAthleteForm);
 
-$("registerForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const username=$("regUsername").value.trim().toLowerCase();
-  const phone=$("regPhone").value.trim();
-  const dob=$("regDob").value;
-  const password=$("regPassword").value;
-  if(!/^[a-z0-9]{4,24}$/.test(username)){message("نام کاربری باید ۴ تا ۲۴ حرف انگلیسی کوچک یا عدد باشد.",true);return;}
-  if(password.length<6){message("رمز عبور باید حداقل ۶ کاراکتر باشد.",true);return;}
-  if(password!==$("regRepeat").value){message("تکرار رمز عبور مطابقت ندارد.",true);return;}
-  if(!/^09\d{9}$/.test(phone)){message("شماره موبایل را با فرمت 09xxxxxxxxx وارد کنید.",true);return;}
-  const name=fullName(); if(!name || !dob){message("همه اطلاعات را کامل کنید.",true);return;}
-  const btn=e.submitter; btn.disabled=true; btn.textContent="در حال ثبت‌نام...";
-  try{
-    const {data,error}=await db.auth.signUp({
-      email:syntheticEmail(username),password,
-      options:{data:{username,full_name:name,phone,date_of_birth:dob}}
+$("searchAthleteBtn").addEventListener("click", async () => {
+  if (!currentAdmin) return;
+  const term = $("athleteSearch").value.trim();
+  if (!term) return showMessage("athleteResults","عبارت جست‌وجو را وارد کنید.");
+  const safe = term.replace(/[,%()]/g,"");
+  const {data,error} = await db.from("athletes").select("id,user_id,full_name,phone,username,gender,total_sessions,remaining_sessions,coaching_type,membership_status").or(`full_name.ilike.%${safe}%,phone.ilike.%${safe}%,username.ilike.%${safe}%`).limit(30);
+  const target = $("athleteResults"); target.replaceChildren();
+  if (error) { target.textContent = "خطا در دریافت اطلاعات. ستون‌ها و دسترسی جدول athletes را بررسی کنید."; return; }
+  if (!data || !data.length) { target.textContent = "ورزشکاری پیدا نشد."; return; }
+  data.forEach(a => {
+    const box = document.createElement("div"); box.className = "notice";
+    const name = document.createElement("strong"); name.textContent = a.full_name || "بدون نام";
+    const info = document.createElement("p"); info.textContent = `موبایل: ${a.phone||"-"} | جلسات: ${a.remaining_sessions??0} از ${a.total_sessions??0}`;
+    const edit = document.createElement("button"); edit.className = "secondary"; edit.textContent = "ویرایش";
+    edit.addEventListener("click", () => {
+      $("athleteId").value = a.id || a.user_id || "";
+      $("athleteName").value = a.full_name || ""; $("athletePhone").value = a.phone || "";
+      $("athleteUsername").value = a.username || ""; $("athleteGender").value = a.gender || "male";
+      $("totalSessions").value = a.total_sessions ?? 0; $("remainingSessions").value = a.remaining_sessions ?? 0;
+      $("coachingType").value = a.coaching_type || "none"; $("membershipStatus").value = a.membership_status || "active";
+      showMessage("athleteMessage","اطلاعات برای ویرایش بارگذاری شد.");
     });
-    if(error) throw error;
-    if(!data.user) throw new Error("ساخت حساب انجام نشد.");
-    const {error:insertError}=await db.from("athletes").upsert({
-      user_id:data.user.id,full_name:name,phone,username,
-      date_of_birth:dob,membership_status:"active",
-      total_sessions:0,remaining_sessions:0,coaching_type:"none"
-    },{onConflict:"user_id"});
-    if(insertError) throw insertError;
-    message("ثبت‌نام انجام شد.");
-    await loadSession();
-  }catch(err){message(err.message||"خطا در ثبت‌نام. تنظیمات دیتابیس را بررسی کنید.",true);}
-  finally{btn.disabled=false;btn.textContent="ثبت نام و ورود";}
+    box.append(name,info,edit); target.append(box);
+  });
 });
 
-$("loginForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const username=$("loginUsername").value.trim().toLowerCase();
-  const password=$("loginPassword").value;
-  if(!/^[a-z0-9]{4,24}$/.test(username)){message("نام کاربری معتبر نیست.",true);return;}
-  const btn=e.submitter;btn.disabled=true;btn.textContent="در حال ورود...";
-  try{
-    const {error}=await db.auth.signInWithPassword({email:syntheticEmail(username),password});
-    if(error) throw error;
-    await loadSession();
-  }catch(err){message("ورود انجام نشد: "+(err.message||"اطلاعات ورود را بررسی کنید."),true);}
-  finally{btn.disabled=false;btn.textContent="ورود";}
+$("saveAthleteBtn").addEventListener("click", async () => {
+  if (!currentAdmin) return;
+  const id = $("athleteId").value;
+  const payload = {
+    full_name:$("athleteName").value.trim(), phone:$("athletePhone").value.trim(),
+    username:$("athleteUsername").value.trim(), gender:$("athleteGender").value,
+    total_sessions:Number($("totalSessions").value), remaining_sessions:Number($("remainingSessions").value),
+    coaching_type:$("coachingType").value, membership_status:$("membershipStatus").value
+  };
+  if (!payload.full_name || !payload.phone) return showMessage("athleteMessage","نام کامل و شماره موبایل الزامی است.",true);
+  if (payload.remaining_sessions > payload.total_sessions) return showMessage("athleteMessage","جلسات باقی‌مانده نمی‌تواند از کل جلسات بیشتر باشد.",true);
+  let query;
+  if (id) query = await db.from("athletes").update(payload).eq("id",id);
+  else query = await db.from("athletes").insert(payload);
+  if (query.error) showMessage("athleteMessage","ذخیره انجام نشد: "+query.error.message,true);
+  else { showMessage("athleteMessage","اطلاعات ورزشکار ذخیره شد."); clearAthleteForm(); }
 });
 
-async function loadSession(){
-  const {data:{user},error}=await db.auth.getUser();
-  if(error||!user){showLoggedOut();return;}
-  currentUser=user;
-  const {data:athlete,error:athleteError}=await db.from("athletes").select("*").eq("user_id",user.id).maybeSingle();
-  if(athleteError) throw athleteError;
-  currentAthlete=athlete;
-  isAdmin=false;
-  const {data:adminRow}=await db.from("admins").select("user_id").eq("user_id",user.id).maybeSingle();
-  isAdmin=!!adminRow;
-  $("authArea").classList.add("hidden");$("appArea").classList.remove("hidden");
-  $("adminTabButton").classList.toggle("hidden",!isAdmin);
-  renderProfile();
+$("sendAnnouncementBtn").addEventListener("click", async () => {
+  if (!currentAdmin) return;
+  const title = $("announcementTitle").value.trim(), body = $("announcementBody").value.trim();
+  if (!title || !body) return showMessage("announcementMessage","عنوان و متن اطلاعیه را وارد کنید.",true);
+  const {error} = await db.from("announcements").insert({title,body});
+  if (error) showMessage("announcementMessage","انتشار انجام نشد: "+error.message,true);
+  else {
+    $("announcementTitle").value = ""; $("announcementBody").value = "";
+    showMessage("announcementMessage","اطلاعیه منتشر شد."); loadAnnouncements();
+  }
+});
+
+(async function init() {
   await loadAnnouncements();
-  showTab("homeTab");
-}
-function showLoggedOut(){
-  currentUser=null;currentAthlete=null;isAdmin=false;
-  $("appArea").classList.add("hidden");$("authArea").classList.remove("hidden");showAuthPage("login");
-}
-function renderProfile(){
-  const a=currentAthlete||{};
-  $("welcomeText").textContent="خوش آمدید، "+(a.full_name||currentUser.user_metadata?.full_name||"ورزشکار");
-  $("userHandle").textContent=a.username?"@"+a.username:"";
-  $("totalSessions").textContent=a.total_sessions??0;
-  $("remainingSessions").textContent=a.remaining_sessions??0;
-  $("coachType").textContent=({none:"بدون مربی",private:"خصوصی",semi_private:"نیمه‌خصوصی"})[a.coaching_type]||a.coaching_type||"—";
-  $("membershipStatus").textContent=({active:"فعال",pending:"در انتظار",expired:"پایان‌یافته"})[a.membership_status]||a.membership_status||"—";
-  $("profileName").value=a.full_name||"";
-  $("profilePhone").value=a.phone||"";
-  $("profileDob").value=a.date_of_birth||"";
-  $("profileUsername").value=a.username||"";
-  $("noticeToggle").checked=localStorage.getItem("bodyland_notice")!=="off";
-}
-async function refreshAthlete(){
-  const {data,error}=await db.from("athletes").select("*").eq("user_id",currentUser.id).maybeSingle();
-  if(error) throw error;currentAthlete=data;renderProfile();
-}
-async function loadAnnouncements(){
-  const box=$("announcements");box.innerHTML="";
-  const {data,error}=await db.from("announcements").select("*").order("created_at",{ascending:false}).limit(30);
-  if(error){box.textContent="امکان دریافت اطلاعیه‌ها وجود ندارد.";return;}
-  if(!data||!data.length){box.innerHTML='<p class="muted">هنوز اطلاعیه‌ای ثبت نشده است.</p>';return;}
-  data.forEach(row=>{
-    const div=document.createElement("div");div.className="item";
-    const p=document.createElement("p");p.textContent=row.message||row.text||"";
-    const small=document.createElement("div");small.className="muted small";
-    small.textContent=row.created_at?new Date(row.created_at).toLocaleString("fa-IR"):"";
-    div.append(p,small);box.append(div);
-  });
-}
-function showTab(tab){
-  document.querySelectorAll(".tabPage").forEach(x=>x.classList.add("hidden"));
-  $(tab).classList.remove("hidden");
-  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
-  if(tab==="adminTab"&&isAdmin) loadAthletes();
-}
-document.querySelectorAll(".tabs button[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
-
-$("logoutBtn").addEventListener("click",async()=>{
-  await db.auth.signOut();showLoggedOut();message("از حساب خارج شدید.");
-});
-$("saveProfileBtn").addEventListener("click",async()=>{
-  const name=$("profileName").value.trim(),phone=$("profilePhone").value.trim(),dob=$("profileDob").value;
-  if(!name||!/^09\d{9}$/.test(phone)||!dob){message("نام، شماره موبایل و تاریخ تولد را درست وارد کنید.",true);return;}
-  const {error}=await db.from("athletes").update({full_name:name,phone,date_of_birth:dob}).eq("user_id",currentUser.id);
-  if(error){message("ذخیره نشد: "+error.message,true);return;}
-  await refreshAthlete();message("اطلاعات ذخیره شد.");
-});
-$("noticeToggle").addEventListener("change",e=>localStorage.setItem("bodyland_notice",e.target.checked?"on":"off"));
-
-async function loadAthletes(){
-  if(!isAdmin)return;
-  const box=$("athleteList");box.textContent="در حال دریافت فهرست...";
-  const {data,error}=await db.from("athletes").select("user_id,full_name,username,phone,total_sessions,remaining_sessions,coaching_type,membership_status").order("created_at",{ascending:false}).limit(200);
-  if(error){box.textContent="دریافت فهرست ناموفق بود: "+error.message;return;}
-  if(!data?.length){box.textContent="هنوز ورزشکاری ثبت نشده است.";return;}
-  box.innerHTML="";
-  data.forEach(a=>{
-    const card=document.createElement("div");card.className="item";
-    const title=document.createElement("strong");title.textContent=(a.full_name||"بدون نام")+" "+(a.username?"(@"+a.username+")":"");
-    const info=document.createElement("p");info.className="muted small";info.textContent=(a.phone||"بدون شماره")+" | جلسات: "+(a.remaining_sessions??0)+"/"+(a.total_sessions??0);
-    const controls=document.createElement("div");controls.className="grid";
-    const total=document.createElement("input");total.type="number";total.min="0";total.value=a.total_sessions??0;total.placeholder="جلسات کل";
-    const remaining=document.createElement("input");remaining.type="number";remaining.min="0";remaining.value=a.remaining_sessions??0;remaining.placeholder="جلسات باقی‌مانده";
-    const coach=document.createElement("select");
-    [["none","بدون مربی"],["private","خصوصی"],["semi_private","نیمه‌خصوصی"]].forEach(([v,t])=>{let o=document.createElement("option");o.value=v;o.textContent=t;coach.append(o);});
-    coach.value=a.coaching_type||"none";
-    const status=document.createElement("select");
-    [["active","فعال"],["pending","در انتظار"],["expired","پایان‌یافته"]].forEach(([v,t])=>{let o=document.createElement("option");o.value=v;o.textContent=t;status.append(o);});
-    status.value=a.membership_status||"active";
-    const save=document.createElement("button");save.type="button";save.textContent="ذخیره تغییرات";
-    save.addEventListener("click",async()=>{
-      const t=Number(total.value),r=Number(remaining.value);
-      if(!Number.isInteger(t)||!Number.isInteger(r)||t<0||r<0||r>t){message("تعداد جلسات نامعتبر است.",true);return;}
-      const {error:updateError}=await db.from("athletes").update({total_sessions:t,remaining_sessions:r,coaching_type:coach.value,membership_status:status.value}).eq("user_id",a.user_id);
-      if(updateError){message("ذخیره انجام نشد: "+updateError.message,true);return;}
-      message("اطلاعات ورزشکار به‌روزرسانی شد.");info.textContent=(a.phone||"بدون شماره")+" | جلسات: "+r+"/"+t;
-    });
-    controls.append(total,remaining,coach,status,save);card.append(title,info,controls);box.append(card);
-  });
-}
-$("refreshAthletesBtn").addEventListener("click",loadAthletes);
-
-$("sendAnnouncementBtn").addEventListener("click",async()=>{
-  if(!isAdmin){message("دسترسی مدیریت ندارید.",true);return;}
-  const messageText=$("announcementInput").value.trim();if(!messageText){message("متن اطلاعیه را وارد کنید.",true);return;}
-  const {error}=await db.from("announcements").insert({message:messageText});
-  if(error){message("ارسال اطلاعیه انجام نشد: "+error.message,true);return;}
-  $("announcem
+  await checkAdmin();
+})();
+</script>
+</body>
+</html>
